@@ -1,8 +1,46 @@
 <script setup>
+import { ref, onMounted } from "vue"
+import { CONST as C } from "./constants"
+import axios from "axios"
 import Login from "./components/users/Login.vue"
 import SignUp from "./components/users/SignUp.vue"
 import TaskInput from "./components/todos/TaskInput.vue"
 import TodoItem from "./components/todos/TodoItem.vue"
+
+const status = ref(C.STATUS_LOGIN)
+
+onMounted(() => {
+  const token = localStorage.getItem('token')
+
+  if (token) {
+    status.value = C.STATUS_TASKINPUT
+  } else {
+    status.value = C.STATUS_LOGIN
+  }
+})
+
+async function logout() {
+  const url = 'https://todoo.5xcamp.us/users/sign_out'
+  const token = localStorage.getItem('token')
+
+  if (token) {
+    const headers = {
+      Authorization: token
+    }
+
+    try {
+      await axios.delete(url, {headers})
+      localStorage.removeItem('token')
+      gotoLogin()
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
+
+const gotoLogin = () => status.value = C.STATUS_LOGIN
+const gotoSignUp = () => status.value = C.STATUS_SIGNUP
+const gotoTaskInput = () => status.value = C.STATUS_TASKINPUT
 </script>
 
 <template>
@@ -23,25 +61,29 @@ import TodoItem from "./components/todos/TodoItem.vue"
 
   <main class="px-6 todo-app main">
     <header>
-      <nav class="navbar">
-        <a class="loginLink" href="#login">登入</a>
-        <a class="signUpLink" href="#sign_up">註冊</a>
+      <nav v-if="status == C.STATUS_TASKINPUT" class="navbar">
+        <a @click.prevent="logout" href="#login">登出</a>
+      </nav>
+      <nav v-else class="navbar">
+        <a @click.prevent="gotoLogin" href="#login">登入</a>
+        <a @click.prevent="gotoSignUp" href="#sign_up">註冊</a>
       </nav>
     </header>
 
     <section id="userSection">
-      <Login />
-      <SignUp />
+      <Login @task_input="gotoTaskInput" @sign_up="gotoSignUp" v-if="status == C.STATUS_LOGIN" />
+      <SignUp @login="gotoLogin" v-if="status == C.STATUS_SIGNUP" />
     </section>
 
-    <TaskInput />
+    <TaskInput v-if="status == C.STATUS_TASKINPUT" />
   </main>
 
-  <section class="todo-list">
+  <section v-if="status == C.STATUS_TASKINPUT" class="todo-list">
     <ul class="items">
       <TodoItem />
     </ul>
   </section>
+
   <footer>
     <p>
       powered by

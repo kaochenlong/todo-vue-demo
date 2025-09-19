@@ -1,3 +1,41 @@
+<script setup>
+import { ref } from 'vue';
+import { appAlert } from '@/utils';
+import axios from 'axios';
+
+const emits = defineEmits(['sign_up', 'task_input'])
+
+const email = ref("")
+const password = ref("")
+
+async function login() {
+  const url = 'https://todoo.5xcamp.us/users/sign_in'
+  const userData = {
+    user: {
+      email: email.value,
+      password: password.value
+    }
+  }
+
+  try {
+    const result = await axios.post(url, userData)
+
+    const token = result.headers.authorization
+
+    if (token) {
+      localStorage.setItem("token", token)
+    }
+
+    emits('task_input')
+  } catch (err) {
+    const { error, message } = err.response.data;
+    const errorMessage = `${message}: ${error.join(' / ')}`
+
+    appAlert(errorMessage)
+  }
+}
+</script>
+
 <template>
   <section id="loginSection">
     <h1>登入</h1>
@@ -5,20 +43,21 @@
       <div class="field">
         <label>
           <h3>Email</h3>
-          <input type="email" id="loginEmail" autocomplete="off" spellcheck="false" placeholder="Email 信箱" />
+          <input type="email" v-model="email" autocomplete="off" spellcheck="false" placeholder="Email 信箱" />
         </label>
       </div>
 
       <div class="field">
         <label>
           <h3>密碼</h3>
-          <input type="password" id="loginPassword" autocomplete="off" spellcheck="false" placeholder="密碼，至少需要 6 個字" />
+          <input type="password" v-model="password" autocomplete="off" spellcheck="false" placeholder="密碼，至少需要 6 個字" />
         </label>
       </div>
 
       <div class="items-center justify-between block sm:flex field">
-        <button>登入</button>
-        <div class="text-xl text-gray-600">還沒有帳號嗎？<a href="#" class="text-link signUpLink">註冊</a>一個吧！</div>
+        <button @click.prevent="login">登入</button>
+        <div class="text-xl text-gray-600">還沒有帳號嗎？
+          <a @click.prevent="$emit('sign_up')" href="#" class="text-link signUpLink">註冊</a>一個吧！</div>
       </div>
     </form>
   </section>
