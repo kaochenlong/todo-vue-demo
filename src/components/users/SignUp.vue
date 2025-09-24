@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios';
-import { appAlert } from '@/utils';
+import { appAlert } from '@/lib/utils';
 import { ref } from 'vue';
 
 const emits = defineEmits(['login'])

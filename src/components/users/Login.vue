@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { appAlert } from '@/utils';
+import { appAlert } from '@/lib/utils';
 import axios from 'axios';
 
 const emits = defineEmits(['sign_up', 'task_input'])

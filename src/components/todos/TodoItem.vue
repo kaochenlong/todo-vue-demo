@@ -1,14 +1,25 @@
+<script setup>
+import { onMounted } from "vue";
+import { useTodoStore } from "@/stores/todo.js"
+
+defineEmits(['show_modal'])
+
+const todoStore = useTodoStore()
+
+onMounted(todoStore.getTodos)
+</script>
+
 <template>
-  <li>
+  <li v-for="todo in todoStore.todos" :key="todo.id">
     <div class="item-content">
       <label>
-        <input type="checkbox" />
-        <p class="content">我要學 Python</p>
+        <input :checked="todo.completed_at" @click="todoStore.toggleTodo(todo.id)" type="checkbox" />
+        <p :class="todo.completed_at ? 'line-through': ''">{{ todo.content }}</p>
       </label>
     </div>
     <div class="item-control">
-      <a href="#" class="edit">edit</a>
-      <a href="#" class="delete">delete</a>
+      <a @click.prevent="$emit('show_modal')" href="#" class="edit">edit</a>
+      <a @click.prevent="todoStore.removeTodo(todo.id)" href="#" class="delete">delete</a>
     </div>
   </li>
 </template>
