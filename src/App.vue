@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, useTemplateRef } from "vue"
+import { ref, onMounted  } from "vue"
 import { CONST as C } from "./lib/constants"
 import axios from "axios"
 import Login from "./components/users/Login.vue"
@@ -8,7 +8,6 @@ import TaskInput from "./components/todos/TaskInput.vue"
 import TodoItem from "./components/todos/TodoItem.vue"
 
 const status = ref(C.STATUS_LOGIN)
-const dialog = useTemplateRef('dialog')
 
 onMounted(() => {
   const token = localStorage.getItem('token')
@@ -81,7 +80,7 @@ const gotoTaskInput = () => status.value = C.STATUS_TASKINPUT
 
   <section v-if="status == C.STATUS_TASKINPUT" class="todo-list">
     <ul class="items">
-      <TodoItem @show_modal="dialog.showModal()" />
+      <TodoItem />
     </ul>
   </section>
 
@@ -92,19 +91,4 @@ const gotoTaskInput = () => status.value = C.STATUS_TASKINPUT
       <a href="https://github.com/5xTraining/todoo-app" class="underline">SOURCE</a>
     </p>
   </footer>
-
-  <dialog ref="dialog" class="modal">
-    <div class="modal-box">
-      <h3 class="text-lg font-bold">更新</h3>
-      <p class="py-4">
-        <input type="text" class="input w-full"
-      </p>
-      <div class="modal-action">
-        <form method="dialog" class="flex gap-2">
-          <a href="#" class="btn btn-success">更新</a>
-          <button class="btn">取消</button>
-        </form>
-      </div>
-    </div>
-  </dialog>
 </template>
