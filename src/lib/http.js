@@ -1,7 +1,14 @@
 import axios from "axios"
 
-const token = localStorage.getItem("token")
+function createAxios() {
+  const token = localStorage.getItem("token")
 
-axios.defaults.headers.common["Authorization"] = token
+  return axios.create({
+    baseURL: "https://todoo.5xcamp.us",
+    headers: {
+      Authorization: token,
+    },
+  })
+}
 
-export { axios }
+export { createAxios }

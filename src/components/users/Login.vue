@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { appAlert } from '@/lib/utils';
-import axios from 'axios';
+import { createAxios } from "@/lib/http.js"
 
 const emits = defineEmits(['sign_up', 'task_input'])
 
@@ -9,7 +9,6 @@ const email = ref("")
 const password = ref("")
 
 async function login() {
-  const url = 'https://todoo.5xcamp.us/users/sign_in'
   const userData = {
     user: {
       email: email.value,
@@ -18,7 +17,8 @@ async function login() {
   }
 
   try {
-    const result = await axios.post(url, userData)
+    const ax = createAxios()
+    const result = await ax.post('/users/sign_in', userData)
 
     const token = result.headers.authorization
 

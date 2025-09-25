@@ -1,7 +1,7 @@
 <script setup>
-import axios from 'axios';
 import { appAlert } from '@/lib/utils';
 import { ref } from 'vue';
+import { createAxios } from "@/lib/http.js"
 
 const emits = defineEmits(['login'])
 
@@ -10,7 +10,6 @@ const nickname = ref("")
 const password = ref("")
 
 async function register() {
-  const url = 'https://todoo.5xcamp.us/users'
   const userData = {
     user: {
       email: email.value,
@@ -20,7 +19,8 @@ async function register() {
   }
 
   try {
-    await axios.post(url, userData)
+    const ax = createAxios()
+    await ax.post('/users', userData)
     emits('login')
   } catch (err) {
     const { error, message } = err.response.data;
