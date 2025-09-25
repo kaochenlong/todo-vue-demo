@@ -51,7 +51,7 @@ const useTodoStore = defineStore("todo", () => {
   }
 
   function toggleTodo(id) {
-    const todo = todos.value.find((t) => t.id == id)
+    const todo = getTodoById(id)
 
     if (todo) {
       todo.completed_at = !todo.completed_at
@@ -61,7 +61,28 @@ const useTodoStore = defineStore("todo", () => {
     ax.patch(`/todos/${id}/toggle`)
   }
 
-  return { addTodo, getTodos, removeTodo, toggleTodo, todos }
+  function getTodoById(id) {
+    return todos.value.find((t) => t.id == id)
+  }
+
+  function updateTodo(id) {
+    const todo = getTodoById(id)
+
+    const todoObj = {
+      todo: {
+        content: todo.content,
+      },
+    }
+
+    const ax = createAxios()
+    try {
+      ax.put(`/todos/${id}`, todoObj)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  return { addTodo, getTodos, removeTodo, updateTodo, toggleTodo, getTodoById, todos }
 })
 
 export { useTodoStore }
